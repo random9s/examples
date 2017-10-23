@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 /*
  * Outline
@@ -63,17 +66,24 @@ func (g *Gorilla) Speak() { fmt.Println("Gorilla says arghhhgfhghgghghghghgh!") 
  */
 
 //Which checks the speaker for the underlying type
-func Which(s Speaker) {
+func Which(s Speaker) string {
+	var val string
 	switch s.(type) {
 	case *Cat:
-		fmt.Println("Underlying type is cat")
+		val = "Cat"
 	case *Dog:
-		fmt.Println("Underlying type is dog")
+		val = "Dog"
 	case *Gorilla:
-		fmt.Println("Underlying type is gorilla")
+		val = "Gorilla"
 	default:
-		fmt.Println("Animal not found")
+		val = "UFO"
 	}
+	return val
+}
+
+//Equals checks the underlying type to see if a and b are equal
+func Equals(a, b Speaker) bool {
+	return reflect.DeepEqual(a, b)
 }
 
 func main() {
@@ -86,7 +96,12 @@ func main() {
 	animals = append(animals, new(Cat))
 
 	for _, animal := range animals {
-		Which(animal)
+		fmt.Println("Underlying type is:", Which(animal))
 		animal.Speak()
+		fmt.Println()
 	}
+
+	fmt.Println("What happens if we pass in nil as type Speaker?\nUnderlying type is:", Which(nil))
+	fmt.Println()
+	fmt.Println("What about checking equality of two interfaces?\nCat == Gorilla:", Equals(new(Cat), new(Gorilla)))
 }
