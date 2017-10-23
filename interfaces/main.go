@@ -11,6 +11,7 @@ import "fmt"
  *	   - Languages that implement interfaces and their purposes
  * 2  Golang Specific Interface Type
  *     - How this implementation differs from more (dynamic) languages (PHP, Ruby, Obj-C)
+ *     - val, ok ~vs~ val
  * 	   - Static - checked at compile time
  *	   - Dynamic - checked when asked for at runtime
  * 3. Creating your own
@@ -55,6 +56,9 @@ func (g *Gorilla) Speak() { fmt.Println("Gorilla says arghhhgfhghgghghghghgh!") 
  *	Interfaces allow for dynamic checking at runtime!
  *      var s Speaker; val, ok := s.(*Cat); <-- Allows us to convert the interface to a concrete type
  *      s.(int) <-- produces error: impossible type switch case: s (type Speaker) cannot have dynamic type int (missing Speak method)
+ *
+ *  Also, worth noting: you can convert the underlying type as well as check for a successful conversion by doing val, ok := s.(*Cat) instead of val := s.(*Cat)
+ *  This will cause the the ok value to be populated with a value indicating if the value contains the specified type instead of throwing an error at runtime.
  *
  */
 
