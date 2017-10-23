@@ -2,6 +2,28 @@ package main
 
 import "fmt"
 
+/*
+ * Outline
+ * ------------------------------------------------------------------------------------------------
+ * 1. What is an Interface
+ *     - Interface-based programming (https://en.wikipedia.org/wiki/Interface-based_programming)
+ *     - Art of Unix Programming
+ *	   - Languages that implement interfaces and their purposes
+ * 2  Golang Specific Interface Type
+ *     - How this implementation differs from more (dynamic) languages (PHP, Ruby, Obj-C)
+ * 	   - Static - checked at compile time
+ *	   - Dynamic - checked when asked for at runtime
+ * 3. Creating your own
+ *	   - Naming conventions
+ *     - Thinking about the most abstract use
+ *     - When to use them
+ * 4. Description of Popular Golang Interfaces
+ *	   - Reader/Writer/Closer/Seeker (Useful for reading from and writing to anything)
+ *     - Encoding (useful for converting arbitrary data into Golang type)
+ *	   - Context (useful for any interaction between a client server)
+ *     - Sort (useful for creating a quick sort function for any data type)
+ */
+
 //Speaker implements the Speak func
 type Speaker interface {
 	Speak()
