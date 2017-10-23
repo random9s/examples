@@ -1,0 +1,2 @@
+http://www.airs.com/blog/archives/277
+https://research.swtch.com/interfaces
