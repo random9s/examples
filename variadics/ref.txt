@@ -1,0 +1,3 @@
+https://medium.com/golangspec/variadic-functions-in-go-13c33182b851
+http://blog.stoneriverelearning.com/a-definitive-guide-to-variadic-functions-in-golang/
+https://golang.org/doc/effective_go.html
