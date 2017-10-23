@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 //Variadics can be of any type
 
@@ -26,8 +29,26 @@ func Min(args ...int64) int64 {
 	return min
 }
 
+//Variadics can even contain functions
+
+//Run contains a list of functions to run
+func Run(args ...func()) {
+	for _, arg := range args {
+		arg()
+	}
+}
+
+func start() {
+	Println("Started...")
+}
+
+func end() {
+	time.Sleep(time.Second * 2)
+	Println("Done")
+}
+
 func main() {
-	var jazz = &struct{}{}
-	Println("vim-go", 2, jazz)
+	Println("vim-go", 2, &struct{}{})
 	Println("Lowest value is", Min(2, 3, 5, 6, 12, 1, 25, 83))
+	Run(start, end)
 }
