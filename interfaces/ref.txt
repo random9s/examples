@@ -2,3 +2,5 @@ http://www.airs.com/blog/archives/277
 https://research.swtch.com/interfaces
 https://en.wikipedia.org/wiki/Interface-based_programming
 Art of Unix Programming by Eric S Raymond
+
+https://www.youtube.com/watch?v=03vLFWV_mpk
