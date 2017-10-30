@@ -7,6 +7,7 @@ http://csapp.cs.cmu.edu/3e/docs/chistory.html
 http://www.gotw.ca/publications/c_family_interview.htm
 http://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html
 Art of Unix Programming by Eric S Raymond
-
+https://blog.golang.org/laws-of-reflection
+https://root.cern.ch/blog/c-discussion-bjarne-stroustrup-part-2#reflection
 
 https://www.youtube.com/watch?v=03vLFWV_mpk

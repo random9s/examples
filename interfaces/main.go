@@ -14,6 +14,7 @@ import (
  *	   - Languages that implement interfaces and their purposes
  * 2  Golang Specific Interface Type
  *     - How this implementation differs from more (dynamic) languages (PHP, Ruby, Obj-C)
+ *	   - Implicit implementation (You don't need to declare intent for interfaces)
  *     - val, ok ~vs~ val
  * 	   - Static - checked at compile time
  *	   - Dynamic - checked when asked for at runtime
@@ -26,6 +27,10 @@ import (
  *     - Encoding (useful for converting arbitrary data into Golang type)
  *	   - Context (useful for any interaction between a client server)
  *     - Sort (useful for creating a quick sort function for any data type)
+ * 5. Reflection
+ *	   - Basics (types, values, kind)
+ *	   - Meta Tags
+ *	   - Marshaling data from one obj to another
  */
 
 //Speaker implements the Speak func
