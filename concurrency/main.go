@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
@@ -17,9 +18,6 @@ import (
  */
 
 /* Missing things:
- * - Closing channels upon completion
- * - Stopping individual part in system
- * - Stopping all parts in system
  * - Error handling
  */
 
@@ -29,6 +27,51 @@ var (
 	FINISH     = make(chan string)
 	TRACKER    = make(map[string]*Track)
 	TOTDUR     time.Duration
+
+	FYU = []string{
+		"https://fyu.se/embed/7mgtv42byx",
+		"https://fyu.se/embed/4c326r25cz",
+		"https://fyu.se/embed/82wet0pjcy",
+		"https://fyu.se/embed/fduon79iw9",
+		"https://fyu.se/embed/g6fm2y7fi0",
+		"https://fyu.se/embed/5vqu2es4m2",
+		"https://fyu.se/embed/44n6iomk5i",
+		"https://fyu.se/embed/nmfevehdmi",
+		"https://fyu.se/embed/oarvq776pv",
+		"https://fyu.se/embed/l1d3pa1678",
+		"https://fyu.se/embed/upxiojwsyy",
+		"https://fyu.se/embed/hnj2x93lte",
+		"https://fyu.se/embed/eejvb7brwl",
+		"https://fyu.se/embed/hba8og48bo",
+		"https://fyu.se/embed/lwi46rfkuj",
+		"https://fyu.se/embed/zklfkkxyc5",
+		"https://fyu.se/embed/xkpj1t41ls",
+		"https://fyu.se/embed/99mkv9d0jk",
+		"https://fyu.se/embed/pgza17fviv",
+		"https://fyu.se/embed/xevaodtx37",
+		"https://fyu.se/embed/vmjr1mi8tg",
+		"https://fyu.se/embed/s5ynvypx06",
+		"https://fyu.se/embed/sbifgibcj9",
+		"https://fyu.se/embed/1xaz279fal",
+		"https://fyu.se/embed/4tx0np7dbb",
+		"https://fyu.se/embed/ir8k8sr19a",
+		"https://fyu.se/embed/fgzt12a3ke",
+		"https://fyu.se/embed/qpumc2ut9x",
+	}
+
+	//BOOKS ...
+	BOOKS = []string{
+		"https://www.googleapis.com/books/v1/volumes/3fZa9af1KtYC",
+		"https://www.googleapis.com/books/v1/volumes/I6BOBAAAQBAJ",
+		"https://www.googleapis.com/books/v1/volumes/RDyjvJbdVvQC",
+		"https://www.googleapis.com/books/v1/volumes/4t-sybVuoqoC",
+		"https://www.googleapis.com/books/v1/volumes/9f9uAQAAQBAJ",
+		"https://www.googleapis.com/books/v1/volumes/DZQg43mfFPsC",
+		"https://www.googleapis.com/books/v1/volumes/a2Q6U0b36rMC",
+		"https://www.googleapis.com/books/v1/volumes/UoN_r_NMR_EC",
+		"https://www.googleapis.com/books/v1/volumes/XXdyQgAACAAJ",
+		"https://www.googleapis.com/books/v1/volumes/Rl-F95_f0GoC",
+	}
 )
 
 //Track ...
@@ -68,56 +111,9 @@ func timer() {
 	}()
 }
 
-//FYU list of resources to get
-var FYU = []string{
-	"https://fyu.se/embed/7mgtv42byx",
-	"https://fyu.se/embed/4c326r25cz",
-	"https://fyu.se/embed/82wet0pjcy",
-	"https://fyu.se/embed/fduon79iw9",
-	"https://fyu.se/embed/g6fm2y7fi0",
-	"https://fyu.se/embed/5vqu2es4m2",
-	"https://fyu.se/embed/44n6iomk5i",
-	"https://fyu.se/embed/nmfevehdmi",
-	"https://fyu.se/embed/oarvq776pv",
-	"https://fyu.se/embed/l1d3pa1678",
-	"https://fyu.se/embed/upxiojwsyy",
-	"https://fyu.se/embed/hnj2x93lte",
-	"https://fyu.se/embed/eejvb7brwl",
-	"https://fyu.se/embed/hba8og48bo",
-	"https://fyu.se/embed/lwi46rfkuj",
-	"https://fyu.se/embed/zklfkkxyc5",
-	"https://fyu.se/embed/xkpj1t41ls",
-	"https://fyu.se/embed/99mkv9d0jk",
-	"https://fyu.se/embed/pgza17fviv",
-	"https://fyu.se/embed/xevaodtx37",
-	"https://fyu.se/embed/vmjr1mi8tg",
-	"https://fyu.se/embed/s5ynvypx06",
-	"https://fyu.se/embed/sbifgibcj9",
-	"https://fyu.se/embed/1xaz279fal",
-	"https://fyu.se/embed/4tx0np7dbb",
-	"https://fyu.se/embed/ir8k8sr19a",
-	"https://fyu.se/embed/fgzt12a3ke",
-	"https://fyu.se/embed/qpumc2ut9x",
-}
-
-//BOOKS ...
-var BOOKS = []string{
-	"https://www.googleapis.com/books/v1/volumes/3fZa9af1KtYC",
-	"https://www.googleapis.com/books/v1/volumes/I6BOBAAAQBAJ",
-	"https://www.googleapis.com/books/v1/volumes/RDyjvJbdVvQC",
-	"https://www.googleapis.com/books/v1/volumes/4t-sybVuoqoC",
-	"https://www.googleapis.com/books/v1/volumes/9f9uAQAAQBAJ",
-	"https://www.googleapis.com/books/v1/volumes/DZQg43mfFPsC",
-	"https://www.googleapis.com/books/v1/volumes/a2Q6U0b36rMC",
-	"https://www.googleapis.com/books/v1/volumes/UoN_r_NMR_EC",
-	"https://www.googleapis.com/books/v1/volumes/XXdyQgAACAAJ",
-	"https://www.googleapis.com/books/v1/volumes/Rl-F95_f0GoC",
-}
-
 func main() {
-	var parallel, alt bool
+	var parallel bool
 	flag.BoolVar(&parallel, "parallel", false, "Switch to parallel mode")
-	flag.BoolVar(&alt, "alt", false, "Switch to parallel mode")
 	flag.Parse()
 
 	//Start timer
@@ -129,19 +125,14 @@ func main() {
 		return
 	}
 
-	//Alternate parallel example
-	if alt {
-		altParallelMain()
-		return
-	}
-
-	fetch := fetchSystem()
+	var n = int32(len(FYU))
+	fetch, format, burn := system(n)
 	for _, fyu := range FYU {
 		SLOWMOBIUS <- NewTracker(strings.TrimPrefix(fyu, "https://fyu.se/embed/"))
 		fetch.Get(fyu)
 	}
 
-	pseudoWait()
+	Wait(fetch, format, burn)
 }
 
 func parallelMain() {
@@ -149,9 +140,12 @@ func parallelMain() {
 	var cores = runtime.NumCPU()
 	var blocksize = getWorkLoad(cores, len(FYU))
 	var remainder = len(FYU) % cores
+	var coreDone = make(chan bool)
+	var n int32
 
 	var assigned = 0
 	for i := 0; i < cores; i++ {
+		atomic.AddInt32(&n, +1)
 		//Get section of work for core i
 		var work []string
 		var offset = assigned + blocksize
@@ -168,16 +162,23 @@ func parallelMain() {
 
 		//Async start proc that creates fetch system and fetches all work
 		go func(w []string) {
-			var fetch = fetchSystem()
-
+			var n = int32(len(w))
+			fetch, format, burn := system(n)
 			for _, url := range w {
 				SLOWMOBIUS <- NewTracker(strings.TrimPrefix(url, "https://fyu.se/embed/"))
 				fetch.Get(url)
 			}
+
+			Wait(fetch, format, burn)
+			coreDone <- true
 		}(work)
 	}
 
-	pseudoWait()
+	for range coreDone {
+		if atomic.AddInt32(&n, -1) == 0 {
+			break
+		}
+	}
 }
 
 func getWorkLoad(cores, worklen int) int {
@@ -188,50 +189,44 @@ func getWorkLoad(cores, worklen int) int {
 	return -1
 }
 
-//Run ...
-func Run(id int, ch chan string, stop chan bool) {
-	fetch := fetchSystem()
-	for {
-		select {
-		case url := <-ch:
-			fmt.Printf("Proc %d started work\n", id)
-			SLOWMOBIUS <- NewTracker(strings.TrimPrefix(url, "https://fyu.se/embed/"))
-			fetch.Get(url)
-		case <-stop:
-			//stop
-		}
-	}
-}
-
 func altParallelMain() {
-	//Find core, work block size, and remainder that will be spread across cores arbitrarily
+	//Find core
 	var cores = runtime.NumCPU()
 
 	ch := make(chan string)
-	stop := make(chan bool, 1)
 	for i := 0; i < cores; i++ {
-		go Run(i, ch, stop)
+		go run(i, ch)
 	}
 
 	for _, fyu := range FYU {
 		ch <- fyu
 	}
 
-	pseudoWait()
-}
-
-func fetchSystem() *Fetch {
-	var fetcher = NewFetch()
-	var formatter = NewFormat(new(Fyuse))
-	Connect(fetcher, formatter)
-
-	var incinerator = NewFurnace()
-	Connect(formatter, incinerator)
-	return fetcher
-}
-
-func pseudoWait() {
+	//Because we don't know what went where, we cannot use our wait method
 	for {
 		time.Sleep(time.Minute)
 	}
+
+}
+
+func run(id int, ch chan string) {
+	fetch, _, _ := system(-1)
+	for {
+		select {
+		case url := <-ch:
+			SLOWMOBIUS <- NewTracker(strings.TrimPrefix(url, "https://fyu.se/embed/"))
+			fetch.Get(url)
+		}
+	}
+}
+
+func system(n int32) (*Fetch, *Format, *Furnace) {
+	var fetcher = NewFetch(n)
+	var formatter = NewFormat(new(Fyuse), n)
+	Connect(fetcher, formatter)
+
+	var incinerator = NewFurnace(n)
+	Connect(formatter, incinerator)
+
+	return fetcher, formatter, incinerator
 }
