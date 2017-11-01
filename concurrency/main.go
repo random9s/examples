@@ -115,8 +115,9 @@ var BOOKS = []string{
 }
 
 func main() {
-	var parallel bool
+	var parallel, alt bool
 	flag.BoolVar(&parallel, "parallel", false, "Switch to parallel mode")
+	flag.BoolVar(&alt, "alt", false, "Switch to parallel mode")
 	flag.Parse()
 
 	//Start timer
@@ -128,7 +129,12 @@ func main() {
 		return
 	}
 
-	//Run single threaded
+	//Alternate parallel example
+	if alt {
+		altParallelMain()
+		return
+	}
+
 	fetch := fetchSystem()
 	for _, fyu := range FYU {
 		SLOWMOBIUS <- NewTracker(strings.TrimPrefix(fyu, "https://fyu.se/embed/"))
@@ -180,6 +186,38 @@ func getWorkLoad(cores, worklen int) int {
 	}
 
 	return -1
+}
+
+//Run ...
+func Run(id int, ch chan string, stop chan bool) {
+	fetch := fetchSystem()
+	for {
+		select {
+		case url := <-ch:
+			fmt.Printf("Proc %d started work\n", id)
+			SLOWMOBIUS <- NewTracker(strings.TrimPrefix(url, "https://fyu.se/embed/"))
+			fetch.Get(url)
+		case <-stop:
+			//stop
+		}
+	}
+}
+
+func altParallelMain() {
+	//Find core, work block size, and remainder that will be spread across cores arbitrarily
+	var cores = runtime.NumCPU()
+
+	ch := make(chan string)
+	stop := make(chan bool, 1)
+	for i := 0; i < cores; i++ {
+		go Run(i, ch, stop)
+	}
+
+	for _, fyu := range FYU {
+		ch <- fyu
+	}
+
+	pseudoWait()
 }
 
 func fetchSystem() *Fetch {
