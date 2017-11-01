@@ -26,7 +26,11 @@ func (f *Furnace) Receive() {
 	go func() {
 		for {
 			select {
-			case v := <-f.receive:
+			case v, ok := <-f.receive:
+				if !ok {
+					return
+				}
+
 				if fyu, ok := v.(*Fyuse); ok {
 					fmt.Println("Incinerated fyuse", fyu.UID, " with path", fyu.Path)
 					FINISH <- fyu.UID

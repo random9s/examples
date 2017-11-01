@@ -38,7 +38,11 @@ func (f *Format) Receive() {
 	go func() {
 		for {
 			select {
-			case v := <-f.receive:
+			case v, ok := <-f.receive:
+				if !ok {
+					return
+				}
+
 				f.Process(v)
 			}
 		}

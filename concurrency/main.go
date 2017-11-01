@@ -8,13 +8,19 @@ import (
 	"time"
 )
 
-/*Things covered:
+/* Things covered:
  * - interfaces
  * - reflection
  * - channels
  * - concurrency
  * - parallelism
- *
+ */
+
+/* Missing things:
+ * - Closing channels upon completion
+ * - Stopping individual part in system
+ * - Stopping all parts in system
+ * - Error handling
  */
 
 //SLOWMOBIUS ...
@@ -108,20 +114,21 @@ var BOOKS = []string{
 	"https://www.googleapis.com/books/v1/volumes/Rl-F95_f0GoC",
 }
 
-func init() {
-	timer()
-}
-
 func main() {
 	var parallel bool
 	flag.BoolVar(&parallel, "parallel", false, "Switch to parallel mode")
 	flag.Parse()
 
+	//Start timer
+	timer()
+
+	//Run in parallel
 	if parallel {
 		parallelMain()
 		return
 	}
 
+	//Run single threaded
 	fetch := fetchSystem()
 	for _, fyu := range FYU {
 		SLOWMOBIUS <- NewTracker(strings.TrimPrefix(fyu, "https://fyu.se/embed/"))
