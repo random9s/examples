@@ -27,9 +27,15 @@ func (f *Furnace) Receive() {
 		for {
 			select {
 			case v := <-f.receive:
-				if book, ok := v.(*Book); ok {
-					fmt.Println("Incinerated book", book)
+				if fyu, ok := v.(*Fyuse); ok {
+					fmt.Println("Incinerated fyuse", fyu.UID, " with path", fyu.Path)
+					FINISH <- fyu.UID
 				}
+				/*
+					if book, ok := v.(*Book); ok {
+						fmt.Println("Incinerated book", book)
+					}
+				*/
 			}
 		}
 	}()

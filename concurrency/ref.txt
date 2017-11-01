@@ -1,3 +1,4 @@
 http://pages.cs.wisc.edu/~remzi/OSTEP/threads-bugs.pdf
 https://www.youtube.com/watch?v=cN_DpYBzKso
 https://developers.google.com/books/docs/v1/getting_started#REST
+http://pages.tacc.utexas.edu/~eijkhout/Articles/EijkhoutIntroToHPC.pdf
